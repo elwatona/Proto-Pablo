@@ -4,7 +4,7 @@ using UnityEngine;
 public class Orb : MonoBehaviour
 {
     [Header("Orbit Reference")]
-    [SerializeField] Transform _moonTransform;
+    private Transform _moonTransform;
     private IOrbitable _orbit;
 
     [Header("Orbit Settings")]
@@ -33,10 +33,12 @@ public class Orb : MonoBehaviour
     {
         if (other.TryGetComponent<IOrbitable>(out IOrbitable orbit))
         {
-            if (orbit.CollidesInDangerZone(transform.position))
+            if(_orbit != null && _orbit!= orbit) _orbit.ExitOrbit();
+
+            if (orbit.IsInDangerZone(transform.position))
             {
                 // Impacto en zona peligrosa
-                // Destroy(gameObject);
+                gameObject.SetActive(false);
                 return;
             }
 
@@ -91,8 +93,7 @@ public class Orb : MonoBehaviour
         Debug.DrawRay(transform.position, tangentDir, Color.cyan);
     }
 
-    [ContextMenu("Loose")]
-    void Loose()
+    public void Loose()
     {
         _orbit?.ExitOrbit();
         _orbit = null;

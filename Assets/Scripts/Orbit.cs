@@ -6,38 +6,25 @@ public class Orbit : MonoBehaviour, IOrbitable
     [Header("Orbit Settings")]
     [SerializeField] float _orbitRadius = 2f;
     [SerializeField] float _rotationSpeed = 1.5f;
-
-    [Header("Danger Zones")]
-    [SerializeField] List<DangerZone> _dangerZones = new List<DangerZone>();
-    private bool _isOccupied;
+    [SerializeField] DangerZone _dangerZone;
 
     [Header("References")]
     [SerializeField] Renderer _orbitRenderer;
     [SerializeField] Transform _transform;
-    private Material _material
+    private OrbitShaderController _shaderController;
+    void Awake()
     {
-        get
-        {
-            if (_orbitRenderer == null)
-            {
-                Debug.LogError("Reference has no renderer");
-                return null;
-            }
-            Material material = Application.isPlaying
-                ? _orbitRenderer.material
-                : _orbitRenderer.sharedMaterial;
-            return material;
-        }
+        CacheReferences();
     }
     void Start()
     {
-        UpdateShaderData();
+        _shaderController.Apply();
         UpdateTransformValues();
     }
     void OnValidate()
     {
         CacheReferences();
-        UpdateShaderData();
+        _shaderController.SetData(_dangerZone);
         UpdateTransformValues();
     }
     void Update()
@@ -45,7 +32,7 @@ public class Orbit : MonoBehaviour, IOrbitable
         _transform.parent.Rotate(Vector3.forward * _rotationSpeed * Time.deltaTime);
     }
 
-    public bool CollidesInDangerZone(Vector3 orbPosition)
+    public bool IsInDangerZone(Vector3 orbPosition)
     {
         Vector3 localPos = _transform.parent.InverseTransformPoint(orbPosition);
 
@@ -57,49 +44,23 @@ public class Orbit : MonoBehaviour, IOrbitable
         float theta = Mathf.Atan2(localPos.z, localPos.x);
         if (theta < 0) theta += Mathf.PI * 2;
 
-        foreach (DangerZone zone in _dangerZones)
-        {
-            if (theta >= zone.thetaMin && theta <= zone.thetaMax &&
-                phi >= zone.phiMin && phi <= zone.phiMax)
+            if (theta >= _dangerZone.thetaMin && theta <= _dangerZone.thetaMax &&
+                phi >= _dangerZone.phiMin && phi <= _dangerZone.phiMax)
             {
                 return true;
             }
-        }
 
         return false;
     }
 
     void CacheReferences()
     {
-        if (_orbitRenderer == null)
-            _orbitRenderer = transform.GetComponent<Renderer>();
         if (_transform == null) 
-            _transform = transform;
-            
-    }
-    void UpdateShaderData()
-    {
-        if (_dangerZones.Count == 0 || _isOccupied)
-        {
-            SetShaderValues(0,0,0,0);
-            return;
-        }
-
-        DangerZone z = _dangerZones[0];
-        SetShaderValues(z.thetaMin, z.thetaMax, z.phiMin, z.phiMax);
-    }
-    void SetShaderValues(float thetaMin, float thetaMax, float phiMin, float phiMax)
-    {
-        if(_material == null)
-        {
-            Debug.LogError("Reference has no material");
-            return;
-        }
-
-        _material.SetFloat("_ThetaMin", thetaMin);
-        _material.SetFloat("_ThetaMax", thetaMax);
-        _material.SetFloat("_PhiMin", phiMin);
-        _material.SetFloat("_PhiMax", phiMax);
+            _transform = transform;       
+        if (_orbitRenderer == null)
+            _orbitRenderer = _transform.GetComponent<Renderer>();
+        if(_shaderController == null)
+            _shaderController = new OrbitShaderController(_orbitRenderer, _dangerZone);
     }
 
     void UpdateTransformValues()
@@ -116,19 +77,18 @@ public class Orbit : MonoBehaviour, IOrbitable
 
     public void EnterOrbit()
     {
-        _isOccupied = true;
-        UpdateShaderData();
+        _shaderController.SetTetha(0,0);
+        _shaderController.SetPhi(0,0);
     }
 
     public void ExitOrbit()
     {
-        _isOccupied = false;
-        UpdateShaderData();
+        _shaderController.SetData(_dangerZone);
     }
 }
 
 [System.Serializable]
-public class DangerZone
+public struct DangerZone
 {
     [Range(0, Mathf.PI * 2)]
     public float thetaMin;
