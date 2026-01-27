@@ -1,8 +1,11 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Orb : MonoBehaviour
 {
+    public static event Action OnOrbitEnter, OnOrbitExit, OnSpawn, OnDespawn;
+
     [Header("Orbit Reference")]
     private Transform _moonTransform;
     private IOrbitable _orbit;
@@ -15,40 +18,62 @@ public class Orb : MonoBehaviour
     [SerializeField] float _tangentialForce = 8f;        // Influencia orbital
     [SerializeField] float _radialDamping = 4f;           // “Atmósfera”
 
-    Rigidbody _rb;
+    private Rigidbody _rb;
+    private Vector3 _screenPosition;
+    private bool _isInScreen => _screenPosition.x > 0 & _screenPosition.x < 1 & _screenPosition.y > 0 & _screenPosition.y < 1;
 
     void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        _rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
-
+    void OnEnable()
+    {
+        _rb.useGravity = true;
+        OnSpawn?.Invoke();
+    }
     void FixedUpdate()
     {
         if (_moonTransform != null)
             ApplyOrbitalForces();
     }
-
+    void LateUpdate()
+    {
+        _screenPosition = Camera.main.WorldToViewportPoint(transform.position);
+        if(!_isInScreen) gameObject.SetActive(false);
+    }
     void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<IOrbitable>(out IOrbitable orbit))
-        {
-            if(_orbit != null && _orbit!= orbit) _orbit.ExitOrbit();
-
-            if (orbit.IsInDangerZone(transform.position))
-            {
-                // Impacto en zona peligrosa
-                gameObject.SetActive(false);
-                return;
-            }
-
-            orbit.EnterOrbit();
-            _rb.useGravity = false;
-            _orbit = orbit;
-            _moonTransform = other.transform;
-        }
+        if (other.TryGetComponent(out IOrbitable orbit)) EnterOrbit(orbit, other.transform);
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        gameObject.SetActive(false);
+    }
+    void OnDisable()
+    {
+        if(_orbit != null) _orbit.ExitOrbit();
+        _rb.linearVelocity = Vector3.zero;
+        OnDespawn?.Invoke();
     }
 
+    void EnterOrbit(IOrbitable orbit, Transform moon)
+    {
+        if(_orbit != null && _orbit!= orbit) _orbit.ExitOrbit();
+
+        if (orbit.IsInDangerZone(transform.position))
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
+        orbit.EnterOrbit();
+
+        if(_rb.useGravity) _rb.useGravity = false;
+        
+        _orbit = orbit;
+        _moonTransform = moon;
+        OnOrbitEnter?.Invoke();
+    }
     void ApplyOrbitalForces()
     {
         Vector3 toCenter = _moonTransform.position - transform.position;
@@ -95,8 +120,11 @@ public class Orb : MonoBehaviour
 
     public void Loose()
     {
+        if(_orbit == null) return;
+
         _orbit?.ExitOrbit();
         _orbit = null;
         _moonTransform = null;
+        OnOrbitExit.Invoke();
     }
 }

@@ -55,12 +55,9 @@ public class Orbit : MonoBehaviour, IOrbitable
 
     void CacheReferences()
     {
-        if (_transform == null) 
-            _transform = transform;       
-        if (_orbitRenderer == null)
-            _orbitRenderer = _transform.GetComponent<Renderer>();
-        if(_shaderController == null)
-            _shaderController = new OrbitShaderController(_orbitRenderer, _dangerZone);
+        if (!_transform) _transform = transform;       
+        if (!_orbitRenderer) _orbitRenderer = _transform.GetComponent<Renderer>();
+        if(_shaderController == null) _shaderController = new OrbitShaderController(_orbitRenderer, _dangerZone);
     }
 
     void UpdateTransformValues()
