@@ -1,17 +1,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Orbit : MonoBehaviour
+public class Orbit : MonoBehaviour, IOrbitable
 {
     [Header("Orbit Settings")]
     [SerializeField] float _orbitRadius = 2f;
+    [SerializeField] float _rotationSpeed = 1.5f;
 
     [Header("Danger Zones")]
     [SerializeField] List<DangerZone> _dangerZones = new List<DangerZone>();
+    private bool _isOccupied;
 
     [Header("References")]
     [SerializeField] Renderer _orbitRenderer;
     [SerializeField] Transform _transform;
+    private Material _material
+    {
+        get
+        {
+            if (_orbitRenderer == null)
+            {
+                Debug.LogError("Reference has no renderer");
+                return null;
+            }
+            Material material = Application.isPlaying
+                ? _orbitRenderer.material
+                : _orbitRenderer.sharedMaterial;
+            return material;
+        }
+    }
     void Start()
     {
         UpdateShaderData();
@@ -19,25 +36,28 @@ public class Orbit : MonoBehaviour
     }
     void OnValidate()
     {
+        CacheReferences();
         UpdateShaderData();
         UpdateTransformValues();
     }
-
-    public bool IsOrbInDanger(Vector3 orbPosition)
+    void Update()
     {
-        // Posición relativa a la luna
-        Vector3 localPos = orbPosition - transform.position;
+        _transform.parent.Rotate(Vector3.forward * _rotationSpeed * Time.deltaTime);
+    }
+
+    public bool CollidesInDangerZone(Vector3 orbPosition)
+    {
+        Vector3 localPos = _transform.parent.InverseTransformPoint(orbPosition);
 
         float r = localPos.magnitude;
         if (Mathf.Abs(r - _orbitRadius) > 0.2f)
             return false;
 
-        // Coordenadas esféricas
-        float phi = Mathf.Acos(localPos.y / r);           // 0..PI
-        float theta = Mathf.Atan2(localPos.z, localPos.x); // -PI..PI
+        float phi = Mathf.Acos(localPos.y / r);
+        float theta = Mathf.Atan2(localPos.z, localPos.x);
         if (theta < 0) theta += Mathf.PI * 2;
 
-        foreach (var zone in _dangerZones)
+        foreach (DangerZone zone in _dangerZones)
         {
             if (theta >= zone.thetaMin && theta <= zone.thetaMax &&
                 phi >= zone.phiMin && phi <= zone.phiMax)
@@ -49,48 +69,41 @@ public class Orbit : MonoBehaviour
         return false;
     }
 
-    void UpdateShaderData()
+    void CacheReferences()
     {
         if (_orbitRenderer == null)
-            _orbitRenderer = transform.Find("Orbit").GetComponent<Renderer>();
-
-        if (_orbitRenderer == null)
+            _orbitRenderer = transform.GetComponent<Renderer>();
+        if (_transform == null) 
+            _transform = transform;
+            
+    }
+    void UpdateShaderData()
+    {
+        if (_dangerZones.Count == 0 || _isOccupied)
         {
-            Debug.LogError("Reference has no renderer");
+            SetShaderValues(0,0,0,0);
             return;
         }
 
-        Material mat = Application.isPlaying
-            ? _orbitRenderer.material
-            : _orbitRenderer.sharedMaterial;
-
-        if (mat == null)
+        DangerZone z = _dangerZones[0];
+        SetShaderValues(z.thetaMin, z.thetaMax, z.phiMin, z.phiMax);
+    }
+    void SetShaderValues(float thetaMin, float thetaMax, float phiMin, float phiMax)
+    {
+        if(_material == null)
         {
             Debug.LogError("Reference has no material");
             return;
         }
 
-        if (_dangerZones.Count == 0)
-        {
-            mat.SetFloat("_ThetaMin", 0);
-            mat.SetFloat("_ThetaMax", 0);
-            mat.SetFloat("_PhiMin", 0);
-            mat.SetFloat("_PhiMax", 0);
-            return;
-        }
-
-        DangerZone z = _dangerZones[0];
-
-        mat.SetFloat("_ThetaMin", z.thetaMin);
-        mat.SetFloat("_ThetaMax", z.thetaMax);
-        mat.SetFloat("_PhiMin", z.phiMin);
-        mat.SetFloat("_PhiMax", z.phiMax);
+        _material.SetFloat("_ThetaMin", thetaMin);
+        _material.SetFloat("_ThetaMax", thetaMax);
+        _material.SetFloat("_PhiMin", phiMin);
+        _material.SetFloat("_PhiMax", phiMax);
     }
 
     void UpdateTransformValues()
     {
-        if (_transform == null) _transform = transform.Find("Orbit");
-
         if (_transform == null) 
         {
             Debug.LogError("Reference has no transform");
@@ -99,6 +112,18 @@ public class Orbit : MonoBehaviour
 
         float diameter = _orbitRadius * 2f;
         _transform.localScale = Vector3.one * diameter;
+    }
+
+    public void EnterOrbit()
+    {
+        _isOccupied = true;
+        UpdateShaderData();
+    }
+
+    public void ExitOrbit()
+    {
+        _isOccupied = false;
+        UpdateShaderData();
     }
 }
 
