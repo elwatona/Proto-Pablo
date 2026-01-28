@@ -9,18 +9,10 @@ public class Orb : MonoBehaviour
     [Header("Orbit Reference")]
     private Transform _moonTransform;
     private IOrbitable _orbit;
-
-    [Header("Orbit Settings")]
-    [SerializeField] float _orbitRadius = 2f;
-
-    [Header("Forces")]
-    [SerializeField] float _gravityForce = 15f;          // Atracción central
-    [SerializeField] float _tangentialForce = 8f;        // Influencia orbital
-    [SerializeField] float _radialDamping = 4f;           // “Atmósfera”
-
     private Rigidbody _rb;
     private Vector3 _screenPosition;
     private bool _isInScreen => _screenPosition.x > 0 & _screenPosition.x < 1 & _screenPosition.y > 0 & _screenPosition.y < 1;
+    private float _collisionAngle;
 
     void Awake()
     {
@@ -33,8 +25,7 @@ public class Orb : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (_moonTransform != null)
-            ApplyOrbitalForces();
+        if (_moonTransform != null) ApplyOrbitalForces();
     }
     void LateUpdate()
     {
@@ -51,14 +42,16 @@ public class Orb : MonoBehaviour
     }
     void OnDisable()
     {
-        if(_orbit != null) _orbit.ExitOrbit();
+        _orbit?.ExitOrbit();
         _rb.linearVelocity = Vector3.zero;
+        _orbit = null;
+        _moonTransform = null;
         OnDespawn?.Invoke();
     }
 
     void EnterOrbit(IOrbitable orbit, Transform moon)
     {
-        if(_orbit != null && _orbit!= orbit) _orbit.ExitOrbit();
+        if(_orbit != null && _orbit != orbit) _orbit.ExitOrbit();
 
         if (orbit.IsInDangerZone(transform.position))
         {
@@ -68,11 +61,26 @@ public class Orb : MonoBehaviour
 
         orbit.EnterOrbit();
 
+
         if(_rb.useGravity) _rb.useGravity = false;
         
         _orbit = orbit;
         _moonTransform = moon;
+
+        GetCollisionAngle();
+        
         OnOrbitEnter?.Invoke();
+    }
+    void GetCollisionAngle()
+    {
+        Vector3 collisionPosition = transform.position;
+        Vector3 moonPosition = _moonTransform.position;
+        
+        Vector3 collisionDirection = _rb.linearVelocity.normalized * -1;
+        
+        Vector3 normalToCollision = (collisionPosition - moonPosition).normalized;
+
+        _collisionAngle = Vector3.Angle(collisionDirection, normalToCollision);
     }
     void ApplyOrbitalForces()
     {
@@ -81,37 +89,28 @@ public class Orb : MonoBehaviour
 
         Vector3 centerDir = toCenter.normalized;
 
-        float gravityStrength =
-            _gravityForce * Mathf.Clamp01(_orbitRadius / distance);
+        float gravityStrength = _orbit.Data.gravity * Mathf.Clamp01(_orbit.Data.radius / distance);
 
-        _rb.AddForce(centerDir * gravityStrength, ForceMode.Acceleration);
+        _rb.AddForce(centerDir * gravityStrength, ForceMode.Acceleration); //Fuerza de gravedad
 
-        Vector3 radialVelocity =
-            Vector3.Project(_rb.linearVelocity, centerDir);
+        Vector3 radialVelocity = Vector3.Project(_rb.linearVelocity, centerDir); //Transformacion a coordenadas polares
 
-        _rb.AddForce(
-            -radialVelocity * _radialDamping,
-            ForceMode.Acceleration
-        );
+        _rb.AddForce( -radialVelocity * _orbit.Data.radialDamping, ForceMode.Acceleration);
 
-        Vector3 baseTangent =
-            Vector3.Cross(centerDir, Vector3.forward).normalized;
+        Vector3 baseTangent = Vector3.Cross(centerDir, Vector3.forward).normalized;
 
-        float directionSign = Mathf.Sign(
-            Vector3.Dot(_rb.linearVelocity, baseTangent)
-        );
-        if (directionSign == 0)
-            directionSign = 1f;
+        float directionSign = Mathf.Sign(Vector3.Dot(_rb.linearVelocity, baseTangent));
+        if (directionSign == 0) directionSign = 1f;
 
         Vector3 tangentDir = baseTangent * directionSign;
 
-        float tangentialInfluence =
-            Mathf.Clamp01(1f - distance / _orbitRadius);
+        float tangentialInfluence = Mathf.Clamp(1f - distance / _orbit.Data.radius, 0, _orbit.Data.radius);
 
         _rb.AddForce(
-            tangentDir * tangentialInfluence * _tangentialForce,
+            tangentDir * tangentialInfluence * _orbit.Data.tangentialForce,
             ForceMode.Acceleration
         );
+        _orbit.UpdateTangentialForce();
 
         // Debug visual
         Debug.DrawLine(transform.position, _moonTransform.position, Color.yellow);

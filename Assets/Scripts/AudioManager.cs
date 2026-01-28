@@ -3,7 +3,6 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     [SerializeField] AudioSource[] _orbAudios;
-    [SerializeField, Range(0,1)] float _volumen = 1f; 
     void OnEnable()
     {
         Orb.OnSpawn += () => PlayOrbSound(0);

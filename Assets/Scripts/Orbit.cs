@@ -1,17 +1,22 @@
-using System.Collections.Generic;
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Orbit : MonoBehaviour, IOrbitable
 {
     [Header("Orbit Settings")]
-    [SerializeField] float _orbitRadius = 2f;
-    [SerializeField] float _rotationSpeed = 1.5f;
     [SerializeField] DangerZone _dangerZone;
+    private OrbitData _runtimeData;
 
     [Header("References")]
     [SerializeField] Renderer _orbitRenderer;
     [SerializeField] Transform _transform;
     private OrbitShaderController _shaderController;
+    [SerializeField] float _collapseTimer;
+
+    public OrbitData Data => _runtimeData;
+    public float CollapseTimer => _collapseTimer;
+
     void Awake()
     {
         CacheReferences();
@@ -19,72 +24,73 @@ public class Orbit : MonoBehaviour, IOrbitable
     void Start()
     {
         _shaderController.Apply();
-        UpdateTransformValues();
     }
     void OnValidate()
     {
         CacheReferences();
         _shaderController.SetData(_dangerZone);
-        UpdateTransformValues();
     }
     void Update()
     {
-        _transform.parent.Rotate(Vector3.forward * _rotationSpeed * Time.deltaTime);
+        Debug.DrawRay(_transform.position, Vector3.up, Color.green, 1f);
+        Debug.DrawRay(_transform.parent.position, Vector3.right, Color.blue, 1f);
     }
-
-    public bool IsInDangerZone(Vector3 orbPosition)
-    {
-        Vector3 localPos = _transform.parent.InverseTransformPoint(orbPosition);
-
-        float r = localPos.magnitude;
-        if (Mathf.Abs(r - _orbitRadius) > 0.2f)
-            return false;
-
-        float phi = Mathf.Acos(localPos.y / r);
-        float theta = Mathf.Atan2(localPos.z, localPos.x);
-        if (theta < 0) theta += Mathf.PI * 2;
-
-            if (theta >= _dangerZone.thetaMin && theta <= _dangerZone.thetaMax &&
-                phi >= _dangerZone.phiMin && phi <= _dangerZone.phiMax)
-            {
-                return true;
-            }
-
-        return false;
-    }
-
     void CacheReferences()
     {
         if (!_transform) _transform = transform;       
         if (!_orbitRenderer) _orbitRenderer = _transform.GetComponent<Renderer>();
-        if(_shaderController == null) _shaderController = new OrbitShaderController(_orbitRenderer, _dangerZone);
+        if (_shaderController == null) _shaderController = new OrbitShaderController(_orbitRenderer, _dangerZone);
     }
-
-    void UpdateTransformValues()
+    public bool IsInDangerZone(Vector3 orbPosition)
     {
-        if (_transform == null) 
-        {
-            Debug.LogError("Reference has no transform");
-            return;
-        }
+        Vector3 localPos = transform.parent.InverseTransformPoint(orbPosition);
 
-        float diameter = _orbitRadius * 2f;
-        _transform.localScale = Vector3.one * diameter;
+        float r = localPos.magnitude;
+        if (r < 0.0001f) return false;
+
+        float phi = Mathf.Acos(Mathf.Clamp(localPos.y / r, -1f, 1f));
+        float theta = Mathf.Atan2(localPos.z, localPos.x);
+        if (theta < 0) theta += Mathf.PI * 2f;
+        
+        return theta >= _dangerZone.thetaMin && theta <= _dangerZone.thetaMax && phi   >= _dangerZone.phiMin   && phi   <= _dangerZone.phiMax;
     }
+
+
+    bool IsAngleInRange(float angle, float min, float max)
+    {
+        if (min <= max)
+            return angle >= min && angle <= max;
+
+        return angle >= min || angle <= max;
+    }
+
 
     public void EnterOrbit()
     {
+        _collapseTimer = 0f;
         _shaderController.SetTetha(0,0);
         _shaderController.SetPhi(0,0);
     }
-
     public void ExitOrbit()
     {
         _shaderController.SetData(_dangerZone);
     }
+    public void SetData(OrbitData data)
+    {
+        _runtimeData = data;
+        _runtimeData.radialDamping = Mathf.Lerp(15, 1, _runtimeData.gravity/100);
+    }
+
+    public void UpdateTangentialForce()
+    {
+        _collapseTimer += Time.fixedDeltaTime;
+
+        _runtimeData.tangentialForce = _collapseTimer >= (_runtimeData.radius * 2) ? -1 : 1;
+        Debug.Log(_runtimeData.tangentialForce);
+    }
 }
 
-[System.Serializable]
+[Serializable]
 public struct DangerZone
 {
     [Range(0, Mathf.PI * 2)]
