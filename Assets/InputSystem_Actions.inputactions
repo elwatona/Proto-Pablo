@@ -22,6 +22,24 @@
                     "processors": "",
                     "interactions": "Hold",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "InstantiateMoon",
+                    "type": "Button",
+                    "id": "f4e3b492-040c-4c11-a5c6-8809f00be40c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Toggle UI",
+                    "type": "Button",
+                    "id": "bf71c69c-d8ee-40c9-b20d-57e625b8047e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -49,6 +67,17 @@
                 },
                 {
                     "name": "",
+                    "id": "ae43ab1a-bf7d-445b-8585-e3e724548ebd",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "InstantiateMoon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "3b7f30a6-e11a-471c-b187-fea1b64a32fa",
                     "path": "<Keyboard>/r",
                     "interactions": "",
@@ -66,6 +95,17 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Retry",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "899b19a8-0dc8-4ad4-86b9-3d47183d7aae",
+                    "path": "<Keyboard>/f2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Toggle UI",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

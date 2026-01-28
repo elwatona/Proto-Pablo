@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 public class OrbitShaderController
 {
@@ -22,14 +21,14 @@ public class OrbitShaderController
     }
     public void Apply()
     {
-        _renderer.GetPropertyBlock(_propertyBlock);
+        _renderer?.GetPropertyBlock(_propertyBlock);
 
         _propertyBlock.SetFloat(_thetaMinID, _data.thetaMin);
         _propertyBlock.SetFloat(_thetaMaxID, _data.thetaMax);
         _propertyBlock.SetFloat(_phiMinID, _data.phiMin);
         _propertyBlock.SetFloat(_phiMaxID, _data.phiMax);
 
-        _renderer.SetPropertyBlock(_propertyBlock);
+        _renderer?.SetPropertyBlock(_propertyBlock);
     }
     public void SetData(DangerZone data)
     {

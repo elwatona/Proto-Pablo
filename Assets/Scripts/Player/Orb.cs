@@ -26,6 +26,7 @@ public class Orb : MonoBehaviour
     void FixedUpdate()
     {
         if (_moonTransform != null) ApplyOrbitalForces();
+        if (_moonTransform && !_moonTransform.parent.gameObject.activeSelf) Loose();
     }
     void LateUpdate()
     {

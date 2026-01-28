@@ -55,16 +55,6 @@ public class Orbit : MonoBehaviour, IOrbitable
         return theta >= _dangerZone.thetaMin && theta <= _dangerZone.thetaMax && phi   >= _dangerZone.phiMin   && phi   <= _dangerZone.phiMax;
     }
 
-
-    bool IsAngleInRange(float angle, float min, float max)
-    {
-        if (min <= max)
-            return angle >= min && angle <= max;
-
-        return angle >= min || angle <= max;
-    }
-
-
     public void EnterOrbit()
     {
         _collapseTimer = 0f;
