@@ -13,8 +13,16 @@ public interface IOrbitable
 [Serializable]
 public struct OrbitData
 {
+    public AstroType astroType;
     [Range(1f, 10f)] public float radius;
     [Range(1f, 100)] public float gravity; 
     [Range(-1f, 1f), HideInInspector] public float tangentialForce;
     [Range(0f, 10), HideInInspector] public float radialDamping;
 }
+public enum AstroType
+{
+    None,
+    Sun,
+    Planet,
+    Asteroid
+};

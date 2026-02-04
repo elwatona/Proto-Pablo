@@ -1,5 +1,5 @@
 using UnityEngine;
-public class BaseShaderController
+public class BodyShader
 {
     readonly Renderer _renderer;
     readonly MaterialPropertyBlock _propertyBlock;
@@ -7,7 +7,7 @@ public class BaseShaderController
 
     readonly int _baseColorID = Shader.PropertyToID("_Base_Color");
 
-    public BaseShaderController(Renderer renderer)
+    public BodyShader(Renderer renderer)
     {
         _renderer = renderer;
         _propertyBlock = new MaterialPropertyBlock();

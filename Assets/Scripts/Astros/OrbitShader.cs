@@ -1,5 +1,5 @@
 using UnityEngine;
-public class OrbitShaderController
+public class OrbitShader
 {
     readonly Renderer _renderer;
     readonly MaterialPropertyBlock _propertyBlock;
@@ -12,7 +12,7 @@ public class OrbitShaderController
     readonly int _phiMaxID = Shader.PropertyToID("_PhiMax");
 #endregion
 
-    public OrbitShaderController(Renderer renderer, DangerZone data)
+    public OrbitShader(Renderer renderer, DangerZone data)
     {
         _renderer = renderer;
         _data = data;

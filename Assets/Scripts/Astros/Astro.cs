@@ -2,27 +2,28 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MoonController : MonoBehaviour, IPointerDownHandler, IMoonEditable, IDragHandler
+public class Astro : MonoBehaviour, IPointerDownHandler, IEditable, IDragHandler
 {
-    public static event Action<IMoonEditable> OnMoonClicked;
-    
+    public static event Action<IEditable> OnAstroClicked;
+
+    [Header("Settings")]
     [SerializeField] OrbitData _orbitData;
-    [SerializeField] BaseData _baseData;
+    [SerializeField] BodyData _bodyData;
     [SerializeField] float _rotationSpeed = 5f;
 
     [SerializeField] Transform _transform, _baseTransform, _orbitTransform;
     private IOrbitable _orbit;
-    private BaseShaderController _baseShaderController;
+    private BodyShader _baseShader;
     private bool _isSelected;
 
-    public MoonData Data 
+    public AstroData Data 
     {
         get 
         {
-            MoonData data = new MoonData()
+            AstroData data = new AstroData()
             {
                 orbitData = _orbitData,
-                baseData = _baseData,
+                baseData = _bodyData,
                 rotationSpeed = _rotationSpeed
             };
             return data;
@@ -54,15 +55,15 @@ public class MoonController : MonoBehaviour, IPointerDownHandler, IMoonEditable,
         if(!_baseTransform) _baseTransform = _transform.Find("Base");
         if(!_orbitTransform) _orbitTransform = _transform.Find("Orbit");
         if(_orbit == null) _orbit = _orbitTransform?.GetComponent<IOrbitable>();
-        if(_baseShaderController == null) _baseShaderController = new BaseShaderController(_baseTransform?.GetComponent<Renderer>());
+        if(_baseShader == null) _baseShader = new BodyShader(_baseTransform?.GetComponent<Renderer>());
     }
     void UpdateBaseValues()
     {
-        float diameter = _baseData.radius * 2f;
-        Color desiredColor = _isSelected ? _baseData.selectedColor : _baseData.baseColor;
+        float diameter = _bodyData.radius * 2f;
+        Color desiredColor = _isSelected ? _bodyData.selectedColor : _bodyData.baseColor;
 
         _baseTransform.localScale = Vector3.one * diameter;
-        _baseShaderController?.SetColor(desiredColor);
+        _baseShader?.SetColor(desiredColor);
     }
     void UpdateOrbitValues()
     {
@@ -102,7 +103,7 @@ public class MoonController : MonoBehaviour, IPointerDownHandler, IMoonEditable,
 
     public void SetBaseRadius(float value)
     {
-        _baseData.radius = value;
+        _bodyData.radius = value;
         UpdateBaseValues();
     }
 
@@ -127,20 +128,20 @@ public class MoonController : MonoBehaviour, IPointerDownHandler, IMoonEditable,
     {
         if(eventData.button != PointerEventData.InputButton.Left) return;
 
-        OnMoonClicked?.Invoke(this);
+        OnAstroClicked?.Invoke(this);
     }
 }
 [Serializable]
-public struct BaseData
+public struct BodyData
 {
     [Range(0.5f, 7.5f)] public float radius;
     public Color baseColor;
     public Color selectedColor;
 }
-public struct MoonData
+public struct AstroData
 {
     public OrbitData orbitData;
-    public BaseData baseData;
+    public BodyData baseData;
     public float rotationSpeed;
 
 }

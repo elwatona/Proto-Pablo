@@ -6,17 +6,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI _version;
     [SerializeField] PanelData _panelData;
     private PanelController _panelController;
-    private IMoonEditable _currentMoon;
+    private IEditable _currentMoon;
 
     void Awake()
     {
         CacheReferences();
-        MoonController.OnMoonClicked += MoonClicked;
+        Astro.OnAstroClicked += MoonClicked;
         _version.text = $"Version {Application.version} \n Unity {Application.unityVersion}";
     }
     private void OnDestroy()
     {
-        MoonController.OnMoonClicked -= MoonClicked;
+        Astro.OnAstroClicked -= MoonClicked;
     }
     void Start()
     {
@@ -30,7 +30,7 @@ public class UIManager : MonoBehaviour
         if(!_controlsGameObject) _controlsGameObject = transform.Find("Controls").gameObject;
         if(!_version) _version = transform.Find("Controls").GetComponent<TextMeshProUGUI>();
     }
-    void MoonClicked(IMoonEditable moon)
+    void MoonClicked(IEditable moon)
     {
         if(_currentMoon != null) _currentMoon.Deselected();
         if(!_inspectorPanelGameObject.activeSelf) _inspectorPanelGameObject.SetActive(true);

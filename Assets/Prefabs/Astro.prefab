@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6956954191383054021}
   - component: {fileID: 1265123177487956}
   m_Layer: 0
-  m_Name: Moon
+  m_Name: Astro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,15 +46,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9debeb82c230f141b8f9ad6aef3a4c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _type: 0
   _orbitData:
     radius: 2.57
     gravity: 53.9
     tangentialForce: 0
     radialDamping: 10
-  _baseData:
+  _bodyData:
     radius: 0.5
-    baseColor: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 1}
-    selectedColor: {r: 0.2236116, g: 0.4366931, b: 0.6320754, a: 1}
+    baseColor: {r: 1, g: 1, b: 1, a: 1}
+    selectedColor: {r: 0, g: 1, b: 0.980212, a: 1}
   _rotationSpeed: 100
   _transform: {fileID: 6956954191383054021}
   _baseTransform: {fileID: 8673578481813039373}

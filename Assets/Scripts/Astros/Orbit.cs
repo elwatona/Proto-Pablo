@@ -11,7 +11,7 @@ public class Orbit : MonoBehaviour, IOrbitable
     [Header("References")]
     [SerializeField] Renderer _orbitRenderer;
     [SerializeField] Transform _transform;
-    private OrbitShaderController _shaderController;
+    private OrbitShader _shaderController;
     [SerializeField] float _collapseTimer;
 
     public OrbitData Data => _runtimeData;
@@ -39,7 +39,7 @@ public class Orbit : MonoBehaviour, IOrbitable
     {
         if (!_transform) _transform = transform;       
         if (!_orbitRenderer) _orbitRenderer = _transform.GetComponent<Renderer>();
-        if (_shaderController == null) _shaderController = new OrbitShaderController(_orbitRenderer, _dangerZone);
+        if (_shaderController == null) _shaderController = new OrbitShader(_orbitRenderer, _dangerZone);
     }
     public bool IsInDangerZone(Vector3 orbPosition)
     {

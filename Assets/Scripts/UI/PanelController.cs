@@ -5,7 +5,7 @@ public class PanelController
 {
     readonly Slider _baseRadiusInput, _orbitRadiusInput, _gravityInput, _rotationInput;
     readonly TMP_Text _baseRadiusText, _orbitRadiusText, _gravityText, _rotationText;
-    IMoonEditable _moon;
+    IEditable _moon;
     public PanelController(PanelData data)
     {
         _baseRadiusInput = data.baseRadiusInput;
@@ -27,7 +27,7 @@ public class PanelController
         _gravityInput.onValueChanged.AddListener(OnGravityChanged);
         _rotationInput.onValueChanged.AddListener(OnRotationChanged);
     }
-    public void SetMoon(IMoonEditable moon)
+    public void SetMoon(IEditable moon)
     {
         _moon = moon;
         UpdateSliders(moon.Data);
@@ -40,7 +40,7 @@ public class PanelController
         _gravityText.text = _gravityInput.value.ToString("0.###");
         _rotationText.text = _rotationInput.value.ToString("0.###");
     }
-    void UpdateSliders(MoonData moonData)
+    void UpdateSliders(AstroData moonData)
     {
         _baseRadiusInput.SetValueWithoutNotify(moonData.baseData.radius);
         _orbitRadiusInput.SetValueWithoutNotify(moonData.orbitData.radius);
