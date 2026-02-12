@@ -15,9 +15,10 @@ public struct OrbitData
 {
     public AstroType astroType;
     [Range(1f, 10f)] public float radius;
-    [Range(1f, 100)] public float gravity; 
-    [Range(-1f, 1f), HideInInspector] public float tangentialForce;
-    [Range(0f, 10), HideInInspector] public float radialDamping;
+    [Range(15, 30)] public float gravity; 
+    [Range(2f, 5f)] public float tangentialForce;
+    [Range(0.5f, 1.5f)] public float radialDamping;
+    public Vector3 velocity;
 }
 public enum AstroType
 {

@@ -10,6 +10,7 @@ public class Astro : MonoBehaviour, IPointerDownHandler, IEditable, IDragHandler
     [SerializeField] OrbitData _orbitData;
     [SerializeField] BodyData _bodyData;
     [SerializeField] float _rotationSpeed = 5f;
+    [SerializeField] Vector3 _startDirection;
 
     [SerializeField] Transform _transform, _baseTransform, _orbitTransform;
     private IOrbitable _orbit;
@@ -48,7 +49,6 @@ public class Astro : MonoBehaviour, IPointerDownHandler, IEditable, IDragHandler
     {
         _transform.Rotate(Vector3.forward * _rotationSpeed * Time.deltaTime);
     }
-
     void CacheReferences()
     {
         if(!_transform) _transform = transform;

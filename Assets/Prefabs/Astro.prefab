@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9debeb82c230f141b8f9ad6aef3a4c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _type: 0
   _orbitData:
+    astroType: 0
     radius: 2.57
     gravity: 53.9
     tangentialForce: 0
@@ -57,6 +57,7 @@ MonoBehaviour:
     baseColor: {r: 1, g: 1, b: 1, a: 1}
     selectedColor: {r: 0, g: 1, b: 0.980212, a: 1}
   _rotationSpeed: 100
+  _startDirection: {x: 0, y: 0, z: 0}
   _transform: {fileID: 6956954191383054021}
   _baseTransform: {fileID: 8673578481813039373}
   _orbitTransform: {fileID: 3348547534281573584}
@@ -219,7 +220,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6956954191383054021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(LineRenderer))]
 public class Orb : MonoBehaviour
 {
     public static event Action OnOrbitEnter, OnOrbitExit, OnSpawn, OnDespawn;
 
-    private Orbiter _orbiterController;
+    [SerializeField] RigidbodyOrbiter _orbiterController;
+    private LineRendererController _lineRendererController;
     private Rigidbody _rb;
     private Vector3 _screenPosition;
     private bool _isInScreen => _screenPosition.x > 0 & _screenPosition.x < 1 & _screenPosition.y > 0 & _screenPosition.y < 1;
@@ -14,7 +15,8 @@ public class Orb : MonoBehaviour
     void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        _orbiterController = new Orbiter(_rb, transform, OnOrbitEnter, OnOrbitExit);
+        _orbiterController = new RigidbodyOrbiter(_rb, transform, OnOrbitEnter, OnOrbitExit);
+        _lineRendererController = new LineRendererController(GetComponent<LineRenderer>(), _rb, transform);
     }
     void OnEnable()
     {
@@ -29,10 +31,15 @@ public class Orb : MonoBehaviour
     {
         _screenPosition = Camera.main.WorldToViewportPoint(transform.position);
         if(!_isInScreen) gameObject.SetActive(false);
+        _lineRendererController.Update();
     }
     void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out IOrbitable orbit)) _orbiterController.EnterOrbit(orbit, other.transform);
+    }
+    void OnTriggerExit(Collider other)
+    {
+        // if (other.TryGetComponent(out IOrbitable orbit)) _orbiterController.TryExitOrbit(orbit, other.transform);
     }
     void OnCollisionEnter(Collision collision)
     {

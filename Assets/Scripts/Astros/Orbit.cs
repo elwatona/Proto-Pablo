@@ -1,5 +1,4 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Orbit : MonoBehaviour, IOrbitable
@@ -13,13 +12,20 @@ public class Orbit : MonoBehaviour, IOrbitable
     [SerializeField] Transform _transform;
     private OrbitShader _shaderController;
     [SerializeField] float _collapseTimer;
+    private Vector3 _lastPosition;
+    private Vector3 _velocity;
 
     public OrbitData Data => _runtimeData;
     public float CollapseTimer => _collapseTimer;
+    public Vector3 Velocity => _velocity;
 
     void Awake()
     {
         CacheReferences();
+    }
+    void Onable()
+    {
+        _lastPosition = _transform.position;
     }
     void Start()
     {
@@ -34,6 +40,11 @@ public class Orbit : MonoBehaviour, IOrbitable
     {
         Debug.DrawRay(_transform.position, Vector3.up, Color.green, 1f);
         Debug.DrawRay(_transform.parent.position, Vector3.right, Color.blue, 1f);
+    }
+    void LateUpdate()
+    {
+        _runtimeData.velocity = (_transform.position - _lastPosition) / Time.deltaTime;
+        _lastPosition = _transform.position;
     }
     void CacheReferences()
     {
@@ -78,6 +89,7 @@ public class Orbit : MonoBehaviour, IOrbitable
         _runtimeData.tangentialForce = _collapseTimer >= (_runtimeData.radius * 2) ? -1 : 1;
         Debug.Log(_runtimeData.tangentialForce);
     }
+
 }
 
 [Serializable]
