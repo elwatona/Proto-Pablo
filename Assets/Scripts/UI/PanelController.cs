@@ -1,79 +1,57 @@
-using TMPro;
-using System;
-using UnityEngine.UI;
+using System.Collections.Generic;
+using UnityEngine;
+
 public class PanelController
 {
-    readonly Slider _baseRadiusInput, _orbitRadiusInput, _gravityInput, _rotationInput;
-    readonly TMP_Text _baseRadiusText, _orbitRadiusText, _gravityText, _rotationText;
-    IEditable _moon;
-    public PanelController(PanelData data)
-    {
-        _baseRadiusInput = data.baseRadiusInput;
-        _orbitRadiusInput = data.orbitRadiusInput;
-        _gravityInput = data.gravityInput;
-        _rotationInput = data.rotationInput;
+    readonly Transform _container;
+    readonly PropertyRow _rowPrefab;
+    readonly GroupHeaderView _groupHeaderPrefab;
+    readonly List<GameObject> _instantiated = new();
 
-        _baseRadiusText = data.baseRadiusText;
-        _orbitRadiusText = data.orbitRadiusText;
-        _gravityText = data.gravityText;
-        _rotationText = data.rotationText;
-
-        BindEvents();
-    }
-    void BindEvents()
+    public PanelController(Transform container, PropertyRow rowPrefab, GroupHeaderView groupHeaderPrefab = null)
     {
-        _baseRadiusInput.onValueChanged.AddListener(OnBaseRadiusChanged);
-        _orbitRadiusInput.onValueChanged.AddListener(OnOrbitRadiusChanged);
-        _gravityInput.onValueChanged.AddListener(OnGravityChanged);
-        _rotationInput.onValueChanged.AddListener(OnRotationChanged);
-    }
-    public void SetMoon(IEditable moon)
-    {
-        _moon = moon;
-        UpdateSliders(moon.Data);
-        UpdateTexts();
-    }
-    public void UpdateTexts()
-    {
-        _baseRadiusText.text = _baseRadiusInput.value.ToString("0.###");
-        _orbitRadiusText.text = _orbitRadiusInput.value.ToString("0.###");
-        _gravityText.text = _gravityInput.value.ToString("0.###");
-        _rotationText.text = _rotationInput.value.ToString("0.###");
-    }
-    void UpdateSliders(AstroData moonData)
-    {
-        _baseRadiusInput.SetValueWithoutNotify(moonData.baseData.radius);
-        _orbitRadiusInput.SetValueWithoutNotify(moonData.orbitData.radius);
-        _gravityInput.SetValueWithoutNotify(moonData.orbitData.gravity);
-        _rotationInput.SetValueWithoutNotify(moonData.rotationSpeed);
-    }
-    void OnBaseRadiusChanged(float value)
-    {
-        _moon.SetBaseRadius(value);
-        _baseRadiusText.text = value.ToString("0.###");
+        _container = container;
+        _rowPrefab = rowPrefab;
+        _groupHeaderPrefab = groupHeaderPrefab;
     }
 
-    void OnOrbitRadiusChanged(float value)
+    public void Bind(IEditable target)
     {
-        _moon.SetOrbitRadius(value);
-        _orbitRadiusText.text = value.ToString("0.###");
+        Clear();
+
+        List<PropertyDefinition> properties = target.GetProperties();
+        string lastGroup = null;
+
+        foreach (PropertyDefinition property in properties)
+        {
+            if (!string.IsNullOrEmpty(property.group) && property.group != lastGroup)
+            {
+                lastGroup = property.group;
+                if (_groupHeaderPrefab != null)
+                {
+                    GroupHeaderView header = Object.Instantiate(_groupHeaderPrefab, _container);
+                    header.SetTitle(property.group);
+                    header.gameObject.SetActive(true);
+                    _instantiated.Add(header.gameObject);
+                }
+            }
+
+            PropertyRow row = Object.Instantiate(_rowPrefab, _container);
+            row.Bind(property);
+            row.gameObject.SetActive(true);
+            _instantiated.Add(row.gameObject);
+        }
     }
 
-    void OnGravityChanged(float value)
+    public void Clear()
     {
-        _moon.SetGravity(value);
-        _gravityText.text = value.ToString("0.###");
-    }
+        foreach (GameObject go in _instantiated)
+        {
+            if (go.TryGetComponent(out PropertyRow row))
+                row.Unbind();
+            Object.Destroy(go);
+        }
 
-    void OnRotationChanged(float value)
-    {
-        _moon.SetRotationSpeed(value);
-        _rotationText.text = value.ToString("0.###");
+        _instantiated.Clear();
     }
-}
-[Serializable]
-public struct PanelData
-{
-    public Slider baseRadiusInput, orbitRadiusInput, gravityInput, rotationInput;
-    public TMP_Text baseRadiusText, orbitRadiusText, gravityText, rotationText;
 }

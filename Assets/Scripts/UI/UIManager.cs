@@ -1,51 +1,76 @@
 using TMPro;
 using UnityEngine;
+
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] GameObject _inspectorPanelGameObject, _controlsGameObject;
+    [SerializeField] GameObject _inspectorPanel;
+    [SerializeField] GameObject _controlsPanel;
+    [SerializeField] GameObject _debugPanel;
+    [SerializeField] TextMeshProUGUI _debugText;
+    [SerializeField] Transform _propertyContainer;
+    [SerializeField] PropertyRow _rowPrefab;
+    [SerializeField] GroupHeaderView _groupHeaderPrefab;
     [SerializeField] TextMeshProUGUI _version;
-    [SerializeField] PanelData _panelData;
+
     private PanelController _panelController;
-    private IEditable _currentMoon;
+    private IEditable _currentTarget;
 
     void Awake()
     {
-        CacheReferences();
-        Astro.OnAstroClicked += MoonClicked;
-        _version.text = $"Version {Application.version} \n Unity {Application.unityVersion}";
+        _panelController = new PanelController(_propertyContainer, _rowPrefab, _groupHeaderPrefab);
+        Astro.OnAstroClicked += SelectTarget;
+        Orb.OnDebugUpdate += UpdateDebug;
+
+        if (_version)
+            _version.text = $"Version {Application.version} \n Unity {Application.unityVersion}";
     }
-    private void OnDestroy()
+    void OnDestroy()
     {
-        Astro.OnAstroClicked -= MoonClicked;
+        Astro.OnAstroClicked -= SelectTarget;
+        Orb.OnDebugUpdate -= UpdateDebug;
     }
     void Start()
     {
-        _inspectorPanelGameObject.SetActive(false);
+        _inspectorPanel.SetActive(false);
     }
 
-    void CacheReferences()
+    public void SelectTarget(IEditable target)
     {
-        if(_panelController == null) _panelController = new PanelController(_panelData);
-        if(!_inspectorPanelGameObject) _inspectorPanelGameObject = transform.Find("Inspector").gameObject;
-        if(!_controlsGameObject) _controlsGameObject = transform.Find("Controls").gameObject;
-        if(!_version) _version = transform.Find("Controls").GetComponent<TextMeshProUGUI>();
-    }
-    void MoonClicked(IEditable moon)
-    {
-        if(_currentMoon != null) _currentMoon.Deselected();
-        if(!_inspectorPanelGameObject.activeSelf) _inspectorPanelGameObject.SetActive(true);
+        _currentTarget?.Deselected();
 
-        _currentMoon = moon;
-        _currentMoon.Selected();
-        _panelController.SetMoon(moon);
+        if (!_inspectorPanel.activeSelf)
+            _inspectorPanel.SetActive(true);
+
+        _currentTarget = target;
+        _currentTarget.Selected();
+        _panelController.Bind(target);
     }
 
-    public void ClosePanel() => _currentMoon?.Deselected();
-    public void ToggleInfo() => _controlsGameObject.SetActive(!_controlsGameObject.activeSelf);
-    public void DeleteMoon()
+    public void ClosePanel()
     {
-        _inspectorPanelGameObject.SetActive(false);
-        _currentMoon.Deselected();
-        _currentMoon.Deactivate();
+        _currentTarget?.Deselected();
+        _panelController.Clear();
+        _inspectorPanel.SetActive(false);
+        _currentTarget = null;
+    }
+
+    public void ToggleInfo() => _controlsPanel.SetActive(!_controlsPanel.activeSelf);
+    public void ToggleDebug() => _debugPanel.SetActive(!_debugPanel.activeSelf);
+
+    void UpdateDebug(float speed, EscapeMode escapeMode)
+    {
+        if (!_debugPanel.activeSelf)
+            return;
+
+        _debugText.text = $"Speed: {speed:0.##}";
+    }
+
+    public void DeleteTarget()
+    {
+        _panelController.Clear();
+        _inspectorPanel.SetActive(false);
+        _currentTarget?.Deselected();
+        _currentTarget?.Deactivate();
+        _currentTarget = null;
     }
 }

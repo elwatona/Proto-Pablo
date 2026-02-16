@@ -42,9 +42,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Toggle UI",
+                    "name": "Toggle Controls",
                     "type": "Button",
                     "id": "bf71c69c-d8ee-40c9-b20d-57e625b8047e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Toggle Orb Data",
+                    "type": "Button",
+                    "id": "2139109f-38c4-48e0-8bc1-00fe73492ea3",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -103,7 +112,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Toggle UI",
+                    "action": "Toggle Controls",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0db3ddfc-8fd4-4776-a382-8197864861a4",
+                    "path": "<Keyboard>/f3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Toggle Orb Data",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

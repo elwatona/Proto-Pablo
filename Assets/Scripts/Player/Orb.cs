@@ -5,6 +5,7 @@ using UnityEngine;
 public class Orb : MonoBehaviour
 {
     public static event Action OnOrbitEnter, OnOrbitExit, OnSpawn, OnDespawn;
+    public static event Action<float, EscapeMode> OnDebugUpdate;
 
     [SerializeField] RigidbodyOrbiter _orbiterController;
     [SerializeField] OrbiterSettings _orbiterSettings = OrbiterSettings.Default;
@@ -15,6 +16,21 @@ public class Orb : MonoBehaviour
     private Vector3 _screenPosition;
     private bool _isAiming;
     private bool _isInScreen => _screenPosition.x > 0 & _screenPosition.x < 1 & _screenPosition.y > 0 & _screenPosition.y < 1;
+
+    public EscapeMode EscapeMode => _orbiterSettings.escapeMode;
+    public float EscapeForce => _orbiterSettings.escapeForce;
+
+    public void SetEscapeMode(EscapeMode mode)
+    {
+        _orbiterSettings.escapeMode = mode;
+        _orbiterController.UpdateSettings(_orbiterSettings);
+    }
+
+    public void SetEscapeForce(float force)
+    {
+        _orbiterSettings.escapeForce = Mathf.Clamp(force, 0f, 30f);
+        _orbiterController.UpdateSettings(_orbiterSettings);
+    }
 
     void Awake()
     {
@@ -45,6 +61,8 @@ public class Orb : MonoBehaviour
         }
 
         _lineRendererController.UpdateDirection(transform.position, _rb.linearVelocity);
+
+        OnDebugUpdate?.Invoke(_orbiterController.Speed, _orbiterController.EscapeMode);
     }
     void OnTriggerEnter(Collider other)
     {
@@ -73,7 +91,7 @@ public class Orb : MonoBehaviour
     public void SetAiming(bool active)
     {
         _isAiming = active;
-        _lineRendererController.SetAiming(active);
+        _lineRendererController.SetAiming(active && _orbiterSettings.escapeMode == EscapeMode.Cursor);
     }
     public void Loose(Vector3 cursorWorldPosition)
     {

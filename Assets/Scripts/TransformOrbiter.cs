@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TransformOrbiter : MonoBehaviour
@@ -11,19 +12,33 @@ public class TransformOrbiter : MonoBehaviour
     private Vector3 _center;
     private Vector2 _desiredRadius;
 
+    bool HasValidTargets()
+    {
+        if (_targets == null || _targets.Length == 0 || _targets[0] == null)
+            return false;
+        if (_targets.Length > 1 && _targets[1] == null)
+            return false;
+        return true;
+    }
+
     void OnEnable()
     {
-        SetValues();
+        if (HasValidTargets())
+            SetValues();
     }
     void OnValidate()
     {
         ClampArray();
-        SetValues();
-        Orbit(_center, _desiredRadius);
+        if (HasValidTargets())
+        {
+            SetValues();
+            Orbit(_center, _desiredRadius);
+        }
     }
     void Update()
     {
-        Orbit(_center, _desiredRadius);
+        if (HasValidTargets())
+            Orbit(_center, _desiredRadius);
     }
     void Orbit(Vector3 center, Vector2 radius)
     {
@@ -34,7 +49,7 @@ public class TransformOrbiter : MonoBehaviour
 
         Vector3 localPos = new Vector3(x, y, 0);
 
-        if (_targets.Length > 1)
+        if (_targets.Length > 1 && _targets[0] != null && _targets[1] != null)
         {
             Vector3 dir = _targets[1].position - _targets[0].position;
             float orientation = Mathf.Atan2(dir.y, dir.x);
@@ -53,8 +68,13 @@ public class TransformOrbiter : MonoBehaviour
     }
     Vector2 GetDesiredRadius()
     {
-        if (_targets.Length == 1 ) return new Vector2(_radius, _radius);
+        if (_targets == null || _targets.Length == 0 || _targets[0] == null)
+            return new Vector2(_radius, _radius);
+        if (_targets.Length == 1)
+            return new Vector2(_radius, _radius);
 
+        if (_targets[1] == null)
+            return new Vector2(_radius, _radius);
         float x = Vector3.Distance(_targets[0].position, _targets[1].position) / 2f;
         float y = x * _eccentricity;
 
@@ -62,18 +82,23 @@ public class TransformOrbiter : MonoBehaviour
     }
     Vector3 GetDesiredCenter()
     {
-        if ( _targets.Length < 1 ) return Vector3.zero;
-        if (_targets.Length > 1 ) return (_targets[0].position + _targets[1].position) / 2;
+        if (_targets == null || _targets.Length == 0 || _targets[0] == null)
+            return Vector3.zero;
+        if (_targets.Length > 1 && _targets[1] != null)
+            return (_targets[0].position + _targets[1].position) / 2;
         return _targets[0].position;
     }
     void SetValues()
     {
+        if (!HasValidTargets())
+            return;
+
         _desiredRadius = GetDesiredRadius();
         _center = GetDesiredCenter();
 
         Vector3 offset = transform.position - _center;
 
-        if (_targets.Length > 1)
+        if (_targets.Length > 1 && _targets[0] != null && _targets[1] != null)
         {
             Vector3 dir = _targets[1].position - _targets[0].position;
             float orientation = Mathf.Atan2(dir.y, dir.x);
@@ -106,5 +131,33 @@ public class TransformOrbiter : MonoBehaviour
         {
             System.Array.Resize(ref _targets, 2);
         }
+    }
+
+    public List<PropertyDefinition> GetProperties()
+    {
+        const string group = "Transform Orbiter";
+        var list = new List<PropertyDefinition>
+        {
+            new("Orbit Distance", 1f, 20f, _radius, value =>
+            {
+                _radius = value;
+                SetValues();
+            }, group: group),
+            new("Orbit Speed", 0.1f, 10f, _speed, value =>
+            {
+                _speed = value;
+            }, group: group),
+        };
+
+        if (_targets != null && _targets.Length > 1)
+        {
+            list.Add(new("Eccentricity", 0.01f, 1f, _eccentricity, value =>
+            {
+                _eccentricity = value;
+                SetValues();
+            }, group: group));
+        }
+
+        return list;
     }
 }

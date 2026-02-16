@@ -421,6 +421,8 @@ public class RigidbodyOrbiter
     }
 
     public Vector3[] TrajectoryPoints => _trajectoryPoints;
+    public float Speed => _rb.linearVelocity.magnitude;
+    public EscapeMode EscapeMode => _settings.escapeMode;
 
     public void UpdateSettings(OrbiterSettings settings)
     {

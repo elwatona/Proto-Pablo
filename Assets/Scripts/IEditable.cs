@@ -1,12 +1,10 @@
+using System.Collections.Generic;
 
 public interface IEditable
 {
-    AstroData Data {get;}
-    void SetBaseRadius(float value);
-    void SetOrbitRadius(float value);
-    void SetGravity(float value);
-    void SetRotationSpeed(float value);
-    void Deactivate();
+    string DisplayName { get; }
+    List<PropertyDefinition> GetProperties();
     void Selected();
     void Deselected();
+    void Deactivate();
 }
