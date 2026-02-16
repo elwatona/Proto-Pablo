@@ -13,17 +13,15 @@ public class Orbit : MonoBehaviour, IOrbitable
     private OrbitShader _shaderController;
     [SerializeField] float _collapseTimer;
     private Vector3 _lastPosition;
-    private Vector3 _velocity;
 
     public OrbitData Data => _runtimeData;
     public float CollapseTimer => _collapseTimer;
-    public Vector3 Velocity => _velocity;
 
     void Awake()
     {
         CacheReferences();
     }
-    void Onable()
+    void OnEnable()
     {
         _lastPosition = _transform.position;
     }
@@ -79,6 +77,7 @@ public class Orbit : MonoBehaviour, IOrbitable
     public void SetData(OrbitData data)
     {
         _runtimeData = data;
+        _runtimeData.transform = _transform;
         _runtimeData.radialDamping = Mathf.Lerp(15, 1, _runtimeData.gravity/100);
     }
 

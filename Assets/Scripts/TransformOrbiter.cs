@@ -70,6 +70,31 @@ public class TransformOrbiter : MonoBehaviour
     {
         _desiredRadius = GetDesiredRadius();
         _center = GetDesiredCenter();
+
+        Vector3 offset = transform.position - _center;
+
+        if (_targets.Length > 1)
+        {
+            Vector3 dir = _targets[1].position - _targets[0].position;
+            float orientation = Mathf.Atan2(dir.y, dir.x);
+
+            float cos = Mathf.Cos(-orientation);
+            float sin = Mathf.Sin(-orientation);
+
+            offset = new Vector3(
+                offset.x * cos - offset.y * sin,
+                offset.x * sin + offset.y * cos,
+                0
+            );
+        }
+
+        if (_desiredRadius.x != 0 && _desiredRadius.y != 0)
+        {
+            float normalizedX = offset.x / _desiredRadius.x;
+            float normalizedY = offset.y / _desiredRadius.y;
+
+            _angle = Mathf.Atan2(normalizedY, normalizedX);
+        }
     }
     void ClampArray()
     {

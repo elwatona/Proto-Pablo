@@ -2,31 +2,56 @@ using UnityEngine;
 
 public class LineRendererController
 {
-    readonly LineRenderer _lineRenderer;
-    readonly Rigidbody _rb;
-    readonly Transform _transform;
-    
-    public LineRendererController(LineRenderer lineRenderer, Rigidbody rb, Transform transform)
+    readonly LineRenderer _trajectoryRenderer;
+    readonly LineRenderer _directionRenderer;
+    readonly RigidbodyOrbiter _orbiter;
+    readonly float _directionLength;
+    private readonly Vector3[] _directionPoints = new Vector3[2];
+    private bool _isAiming;
+
+    public LineRendererController(LineRenderer trajectoryRenderer, LineRenderer directionRenderer, RigidbodyOrbiter orbiter, float directionLength)
     {
-        _lineRenderer = lineRenderer;
-        _rb = rb;
-        _transform = transform;
+        _trajectoryRenderer = trajectoryRenderer;
+        _trajectoryRenderer.enabled = false;
+        _trajectoryRenderer.textureMode = LineTextureMode.Stretch;
+
+        _directionRenderer = directionRenderer;
+        _directionRenderer.enabled = false;
+        _directionRenderer.positionCount = 2;
+
+        _orbiter = orbiter;
+        _directionLength = directionLength;
     }
-    public void Update()
+
+    public void SetAiming(bool active)
     {
-        if (_rb.linearVelocity.sqrMagnitude < 0.01f)
+        _isAiming = active;
+        _trajectoryRenderer.enabled = active;
+    }
+
+    public void UpdateTrajectory(Vector3 cursorWorldPosition)
+    {
+        if (!_isAiming)
+            return;
+
+        int count = _orbiter.PredictTrajectory(cursorWorldPosition);
+        _trajectoryRenderer.positionCount = count;
+        _trajectoryRenderer.SetPositions(_orbiter.TrajectoryPoints);
+    }
+
+    public void UpdateDirection(Vector3 position, Vector3 velocity)
+    {
+        if (velocity.sqrMagnitude < 0.001f)
         {
-            _lineRenderer.enabled = false;
+            _directionRenderer.enabled = false;
             return;
         }
 
-        _lineRenderer.enabled = true;
+        _directionRenderer.enabled = true;
 
-        Vector3 start = _transform.position;
-        Vector3 end = start + _rb.linearVelocity.normalized * 0.3f;
+        _directionPoints[0] = position;
+        _directionPoints[1] = position + velocity.normalized * _directionLength;
 
-        _lineRenderer.positionCount = 2;
-        _lineRenderer.SetPosition(0, start);
-        _lineRenderer.SetPosition(1, end);
+        _directionRenderer.SetPositions(_directionPoints);
     }
 }

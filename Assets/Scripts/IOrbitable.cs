@@ -13,7 +13,8 @@ public interface IOrbitable
 [Serializable]
 public struct OrbitData
 {
-    public AstroType astroType;
+    public AstroType type;
+    [HideInInspector] public Transform transform;
     [Range(1f, 10f)] public float radius;
     [Range(15, 30)] public float gravity; 
     [Range(2f, 5f)] public float tangentialForce;
