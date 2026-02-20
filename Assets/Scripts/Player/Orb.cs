@@ -15,7 +15,10 @@ public class Orb : MonoBehaviour
     private Rigidbody _rb;
     private Vector3 _screenPosition;
     private bool _isAiming;
+    private bool _pendingLooseOncePerDeath;
     private bool _isInScreen => _screenPosition.x > 0 & _screenPosition.x < 1 & _screenPosition.y > 0 & _screenPosition.y < 1;
+
+    const float LooseOncePerDeathSpeed = 20f;
 
     public EscapeMode EscapeMode => _orbiterSettings.escapeMode;
     public float EscapeForce => _orbiterSettings.escapeForce;
@@ -41,6 +44,7 @@ public class Orb : MonoBehaviour
     void OnEnable()
     {
         _orbiterController.OnEnable();
+        _pendingLooseOncePerDeath = true;
         OnSpawn?.Invoke();
     }
     void FixedUpdate()
@@ -95,6 +99,14 @@ public class Orb : MonoBehaviour
     }
     public void Loose(Vector3 cursorWorldPosition)
     {
-        _orbiterController.Loose(cursorWorldPosition);
+        if (_pendingLooseOncePerDeath)
+        {
+            _orbiterController.LooseWithFixedSpeed(cursorWorldPosition, LooseOncePerDeathSpeed);
+            _pendingLooseOncePerDeath = false;
+        }
+        else
+        {
+            _orbiterController.Loose(cursorWorldPosition);
+        }
     }
 }

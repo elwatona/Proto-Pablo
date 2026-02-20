@@ -19,6 +19,7 @@ public class Astro : MonoBehaviour, IPointerDownHandler, IEditable, IDragHandler
     private bool _isSelected;
 
     public string DisplayName => _orbitData.type.ToString();
+    public float BodyRadius => _bodyData.radius;
 
     void Awake()
     {
@@ -97,10 +98,11 @@ public class Astro : MonoBehaviour, IPointerDownHandler, IEditable, IDragHandler
                 _orbitData.radialDamping = value;
                 UpdateOrbitValues();
             }, group: "Orbit"),
+            new("Rotation Speed", 0f, 20f, _rotationSpeed, value =>
+            {
+                _rotationSpeed = value;
+            }, group: "Astro"),
         };
-
-        if (_orbiter != null)
-            properties.AddRange(_orbiter.GetProperties());
 
         return properties;
     }
@@ -114,6 +116,16 @@ public class Astro : MonoBehaviour, IPointerDownHandler, IEditable, IDragHandler
     public void Deselected()
     {
         _isSelected = false;
+        Apply();
+    }
+
+    /// <summary>
+    /// Sets orbit and body data (e.g. when spawning from pool) and refreshes visuals. Type is defined by the prefab, not here.
+    /// </summary>
+    public void Initialize(OrbitData orbitData, BodyData bodyData)
+    {
+        _orbitData = orbitData;
+        _bodyData = bodyData;
         Apply();
     }
 

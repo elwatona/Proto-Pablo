@@ -27,4 +27,4 @@ public enum AstroType
     Sun,
     Planet,
     Asteroid
-};
+}

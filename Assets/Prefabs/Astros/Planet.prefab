@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &7851568481117791712
+--- !u!1001 &9013418159166687900
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10,7 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: _type
-      value: 3
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: _orbitData.type
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: _orbitData.gravity
@@ -18,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: _orbitData.astroType
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: _orbitData.radialDamping
@@ -28,13 +32,29 @@ PrefabInstance:
       propertyPath: _orbitData.tangentialForce
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3348547534281573584, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 3348547534281573584, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 5.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 3348547534281573584, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 5.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 3348547534281573584, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4827974399144659465, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: m_Name
-      value: Asteroid
+      value: Planet
       objectReference: {fileID: 0}
     - target: {fileID: 4827974399144659465, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6956954191383054021, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: m_LocalPosition.x
@@ -78,11 +98,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7783997113177056791, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8186589043628032196, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8673578481813039373, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8673578481813039373, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8673578481813039373, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8673578481813039373, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -90,25 +126,25 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4827974399144659465, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -7296805872559030134}
+      addedObject: {fileID: 7352491973166897632}
   m_SourcePrefab: {fileID: 100100000, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
---- !u!4 &1488688456742587629 stripped
+--- !u!4 &380736288931685265 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8673578481813039373, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
-  m_PrefabInstance: {fileID: 7851568481117791712}
+  m_PrefabInstance: {fileID: 9013418159166687900}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &3456010021423247337 stripped
+--- !u!1 &4473887719547535509 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4827974399144659465, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
-  m_PrefabInstance: {fileID: 7851568481117791712}
+  m_PrefabInstance: {fileID: 9013418159166687900}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-7296805872559030134
+--- !u!114 &7352491973166897632
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3456010021423247337}
+  m_GameObject: {fileID: 4473887719547535509}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba1fabe43a857794abb03d83d5523be1, type: 3}
@@ -119,6 +155,4 @@ MonoBehaviour:
   _radius: 5
   _speed: 1
   _eccentricity: 0.5
-  _orbiterBodyTransform: {fileID: 1488688456742587629}
-  _pathMarginFactor: 0.25
-  _pathLinearSpeed: 2
+  _orbiterBodyTransform: {fileID: 380736288931685265}

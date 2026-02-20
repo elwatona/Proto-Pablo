@@ -47,17 +47,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _orbitData:
-    astroType: 0
+    type: 0
+    transform: {fileID: 0}
     radius: 2.57
-    gravity: 53.9
-    tangentialForce: 0
-    radialDamping: 10
+    gravity: 30
+    tangentialForce: 2
+    radialDamping: 1.5
+    velocity: {x: 0, y: 0, z: 0}
   _bodyData:
     radius: 0.5
     baseColor: {r: 1, g: 1, b: 1, a: 1}
     selectedColor: {r: 0, g: 1, b: 0.980212, a: 1}
   _rotationSpeed: 100
-  _startDirection: {x: 0, y: 0, z: 0}
   _transform: {fileID: 6956954191383054021}
   _baseTransform: {fileID: 8673578481813039373}
   _orbitTransform: {fileID: 3348547534281573584}

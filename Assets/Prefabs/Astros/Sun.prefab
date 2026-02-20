@@ -13,6 +13,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: _orbitData.type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: _orbitData.gravity
       value: 30
       objectReference: {fileID: 0}
@@ -28,6 +32,10 @@ PrefabInstance:
       propertyPath: _orbitData.tangentialForce
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2207610126425778990, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a7da209847d6b4f4f92c911522b427f0, type: 2}
     - target: {fileID: 4827974399144659465, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: m_Name
       value: Sun
@@ -71,6 +79,10 @@ PrefabInstance:
     - target: {fileID: 6956954191383054021, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 7783997113177056791, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

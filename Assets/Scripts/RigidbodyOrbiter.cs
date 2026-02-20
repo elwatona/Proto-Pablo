@@ -369,6 +369,21 @@ public class RigidbodyOrbiter
         _rb.AddForce(escapeDirection * _settings.escapeForce, ForceMode.VelocityChange);
     }
 
+    /// <summary>Applies a fixed speed toward cursor (e.g. first loose after respawn, when velocity is 0 and there is no orbit).</summary>
+    public void LooseWithFixedSpeed(Vector3 cursorWorldPosition, float speed)
+    {
+        Vector3 toCursor = cursorWorldPosition - _transform.position;
+        Vector3 direction = toCursor.sqrMagnitude > 0.0001f ? toCursor.normalized : Vector3.right;
+
+        if (_capturedOrbit != null)
+        {
+            _isDetaching = false;
+            ReleaseCapturedOrbit();
+        }
+
+        _rb.linearVelocity = direction * speed;
+    }
+
     public int PredictTrajectory(Vector3 cursorWorldPosition)
     {
         Vector3 origin = _transform.position;

@@ -17,9 +17,15 @@ public class PanelController
 
     public void Bind(IEditable target)
     {
+        Bind(target.GetProperties());
+    }
+
+    public void Bind(List<PropertyDefinition> properties)
+    {
         Clear();
 
-        List<PropertyDefinition> properties = target.GetProperties();
+        if (properties == null) return;
+
         string lastGroup = null;
 
         foreach (PropertyDefinition property in properties)

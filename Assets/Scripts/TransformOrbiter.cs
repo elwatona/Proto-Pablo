@@ -32,6 +32,7 @@ public class TransformOrbiter : MonoBehaviour
     private float _totalPathLength;
     private float _pathParameter;
     private bool _radiusInitializedFromDistance;
+    private bool _orbitStateDirty = true;
 
     const int KeplerIterations = 5;
 
@@ -49,6 +50,8 @@ public class TransformOrbiter : MonoBehaviour
 
     void OnEnable()
     {
+        CleanNullTargets();
+        _orbitStateDirty = true;
         if (!HasValidTargets()) return;
         if (!_radiusInitializedFromDistance)
         {
@@ -62,11 +65,13 @@ public class TransformOrbiter : MonoBehaviour
         }
         else
             SetValues();
+        // Keep _orbitStateDirty true so first Update() syncs again with final target positions (avoids center at 0,0,0 when target positions apply after OnEnable).
     }
 
     void OnDisable()
     {
         _radiusInitializedFromDistance = false;
+        _orbitStateDirty = true;
     }
 
     void InitializeRadiusFromDistance()
@@ -110,6 +115,11 @@ public class TransformOrbiter : MonoBehaviour
     void Update()
     {
         if (!HasValidTargets()) return;
+        if (_orbitStateDirty)
+        {
+            SyncToTargets();
+            _orbitStateDirty = false;
+        }
         if (UsePathMode())
             ApplyPathOrbit();
         else
@@ -381,6 +391,21 @@ public class TransformOrbiter : MonoBehaviour
         return _targets[0].position;
     }
 
+    /// <summary>Reinitializes orbit state from current position and current targets. Call after assigning or changing targets at runtime.</summary>
+    public void SyncToTargets()
+    {
+        if (!HasValidTargets()) return;
+        if (UsePathMode())
+        {
+            BuildEnvelopePath();
+            SetPathParameterFromPosition();
+        }
+        else
+        {
+            SetValues();
+        }
+    }
+
     void SetValues()
     {
         if (!HasValidTargets())
@@ -426,8 +451,89 @@ public class TransformOrbiter : MonoBehaviour
     }
     void ClampArray()
     {
+        CleanNullTargets();
         if (_targets == null || _targets.Length == 0)
             _targets = new Transform[1];
+    }
+
+    void CleanNullTargets()
+    {
+        if (_targets == null || _targets.Length == 0) return;
+
+        int count = 0;
+        for (int i = 0; i < _targets.Length; i++)
+        {
+            if (_targets[i] != null)
+                count++;
+        }
+
+        if (count == 0)
+        {
+            _targets = new Transform[1];
+            return;
+        }
+
+        if (count == _targets.Length)
+            return;
+
+        var cleaned = new Transform[count];
+        int j = 0;
+        for (int i = 0; i < _targets.Length && j < count; i++)
+        {
+            if (_targets[i] != null)
+                cleaned[j++] = _targets[i];
+        }
+        _targets = cleaned;
+    }
+
+    /// <summary>Elimina referencias nulas del array de targets. Llamar antes de leer la lista (p. ej. desde la UI).</summary>
+    public void EnsureTargetsClean()
+    {
+        CleanNullTargets();
+        if (_targets == null || _targets.Length == 0)
+            _targets = new Transform[1];
+    }
+
+    public int GetTargetCount() => _targets?.Length ?? 0;
+
+    public Transform GetTarget(int index)
+    {
+        if (_targets == null || index < 0 || index >= _targets.Length)
+            return null;
+        return _targets[index];
+    }
+
+    public void AddTarget(Transform t)
+    {
+        if (t == null) return;
+        int len = _targets != null ? _targets.Length : 0;
+        var next = new Transform[len + 1];
+        for (int i = 0; i < len; i++)
+            next[i] = _targets[i];
+        next[len] = t;
+        _targets = next;
+        SyncToTargets();
+    }
+
+    public void RemoveTargetAt(int index)
+    {
+        if (_targets == null || index < 0 || index >= _targets.Length) return;
+        int len = _targets.Length;
+        if (len <= 1)
+        {
+            _targets = new Transform[1];
+            return;
+        }
+        var next = new Transform[len - 1];
+        int j = 0;
+        for (int i = 0; i < len; i++)
+        {
+            if (i != index)
+                next[j++] = _targets[i];
+        }
+        _targets = next;
+        if (HasValidTargets())
+            SyncToTargets();
     }
 
     public List<PropertyDefinition> GetProperties()

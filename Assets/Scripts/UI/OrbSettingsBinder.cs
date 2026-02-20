@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,7 @@ public class OrbSettingsBinder : MonoBehaviour
     [SerializeField] TMP_Dropdown _escapeModeDropdown;
     [SerializeField] Slider _escapeForceSlider;
     [SerializeField] TMP_Text _escapeForceLabel;
+    [SerializeField] TMP_Text _orbStatusLabel;
 
     void OnEnable()
     {
@@ -25,6 +27,8 @@ public class OrbSettingsBinder : MonoBehaviour
             _escapeForceSlider.onValueChanged.AddListener(OnEscapeForceChanged);
             RefreshEscapeForceLabel(_orb.EscapeForce);
         }
+        Orb.OnSpawn += UpdateOrbStatusLabel;
+        Orb.OnDespawn += UpdateOrbStatusLabel;
     }
 
     void OnDisable()
@@ -33,8 +37,13 @@ public class OrbSettingsBinder : MonoBehaviour
             _escapeModeDropdown.onValueChanged.RemoveListener(OnEscapeModeChanged);
         if (_escapeForceSlider != null)
             _escapeForceSlider.onValueChanged.RemoveListener(OnEscapeForceChanged);
+        Orb.OnSpawn -= UpdateOrbStatusLabel;
+        Orb.OnDespawn -= UpdateOrbStatusLabel;
     }
-
+    void Start()
+    {
+        UpdateOrbStatusLabel();
+    }
     void OnEscapeModeChanged(int index)
     {
         if (_orb != null)
@@ -54,5 +63,14 @@ public class OrbSettingsBinder : MonoBehaviour
     {
         if (_escapeForceLabel != null)
             _escapeForceLabel.text = value.ToString("0.##");
+    }
+    void UpdateOrbStatusLabel()
+    {
+        if (_orbStatusLabel == null) return;
+        _orbStatusLabel.text = GetOrbStatusText(_orb.gameObject.activeSelf);
+    }
+    string GetOrbStatusText(bool isActive)
+    {
+        return isActive ? "<color=green>Alive" : "<color=red>Dead";
     }
 }

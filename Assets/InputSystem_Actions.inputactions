@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "InstantiateMoon",
+                    "name": "Instantiate Astro",
                     "type": "Button",
                     "id": "f4e3b492-040c-4c11-a5c6-8809f00be40c",
                     "expectedControlType": "",
@@ -42,7 +42,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Toggle Controls",
+                    "name": "Toggle Inspectors",
                     "type": "Button",
                     "id": "bf71c69c-d8ee-40c9-b20d-57e625b8047e",
                     "expectedControlType": "",
@@ -51,12 +51,12 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Toggle Orb Data",
+                    "name": "Set Spawn Point",
                     "type": "Button",
-                    "id": "2139109f-38c4-48e0-8bc1-00fe73492ea3",
+                    "id": "a9c7c02d-e846-47d9-9189-14997512a2d5",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Hold",
                     "initialStateCheck": false
                 }
             ],
@@ -85,12 +85,45 @@
                 },
                 {
                     "name": "",
-                    "id": "ae43ab1a-bf7d-445b-8585-e3e724548ebd",
+                    "id": "80828fac-994a-4471-bca3-b97f35f2c034",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "InstantiateMoon",
+                    "action": "Set Spawn Point",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a1b2c3d4-0001-4000-8000-000000000001",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Instantiate Astro",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a1b2c3d4-0002-4000-8000-000000000002",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Instantiate Astro",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a1b2c3d4-0003-4000-8000-000000000003",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Instantiate Astro",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -106,24 +139,57 @@
                     "isPartOfComposite": false
                 },
                 {
+                    "name": "One Modifier",
+                    "id": "c11aadaf-9d63-4008-9c85-c3c1e498d456",
+                    "path": "OneModifier(modifiersOrder=1)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Retry",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Modifier",
+                    "id": "fff81fa8-0641-49dc-8845-7796ac09e740",
+                    "path": "<Keyboard>/alt",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Retry",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Binding",
+                    "id": "c767e4f2-ac0a-436c-9806-45453a9f3191",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Retry",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "",
                     "id": "899b19a8-0dc8-4ad4-86b9-3d47183d7aae",
                     "path": "<Keyboard>/f2",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Toggle Controls",
+                    "action": "Toggle Inspectors",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "0db3ddfc-8fd4-4776-a382-8197864861a4",
+                    "id": "a77f1613-89dc-4a04-8fc6-a60f0dc570cc",
                     "path": "<Keyboard>/f3",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Toggle Orb Data",
+                    "action": "Toggle Inspectors",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
