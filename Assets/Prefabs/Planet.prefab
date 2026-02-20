@@ -124,6 +124,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 7352491973166897632}
   m_SourcePrefab: {fileID: 100100000, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+--- !u!4 &380736288931685265 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8673578481813039373, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+  m_PrefabInstance: {fileID: 9013418159166687900}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4473887719547535509 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4827974399144659465, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
@@ -146,3 +151,6 @@ MonoBehaviour:
   _radius: 5
   _speed: 1
   _eccentricity: 0.5
+  _orbiterBodyTransform: {fileID: 380736288931685265}
+  _pathMarginFactor: 0.25
+  _pathLinearSpeed: 2

@@ -13,8 +13,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: _orbitData.gravity
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: _orbitData.astroType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: _orbitData.radialDamping
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1265123177487956, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
+      propertyPath: _orbitData.tangentialForce
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4827974399144659465, guid: d092699f29c09ba4aaba3ec6a1f2c650, type: 3}
       propertyPath: m_Name
